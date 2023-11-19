@@ -5,7 +5,9 @@
 | Nathania Elirica Aliyah        | 5027211057  |
 
 ## Network Configuration
-(1) Lakukan konfigurasi sesuai dengan peta yang sudah diberikan.
+Lakukan konfigurasi sesuai dengan peta yang sudah diberikan.
+
+![topologi](https://i.ibb.co/VgvWjFP/topologi.jpg)
 
 Berikut merupakan konfigurasi untuk tiap node:
 - Aura
@@ -157,7 +159,6 @@ echo "
 www     IN      CNAME   riegel.canyon.it21.com.
 " > /etc/bind/jarkom/riegel.canyon.it21.com
 
-
 cp /etc/bind/db.local /etc/bind/jarkom/granz.channel.it21.com
 
 echo "
@@ -173,8 +174,12 @@ echo "
 @       IN      A       10.74.3.2
 www     IN      CNAME   granz.channel.it21.com.
 " > /etc/bind/jarkom/granz.channel.it21.com
+
+service bind9 restart
 ```
-Selanjutnya, dilakukan testing dengan menggunakan ping
+Selanjutnya, dilakukan testing dengan melakukan ping terhadap kedua domain di client. Sebagai contoh, testing dilakukan di Revolte.
+
+![soal 0](https://i.ibb.co/RBFRTVZ/soal0.jpg)
 
 ## Soal 2
 Client yang melalui Switch3 mendapatkan range IP dari [prefix IP].3.16 - [prefix IP].3.32 dan [prefix IP].3.64 - [prefix IP].3.80
@@ -300,6 +305,32 @@ subnet 10.74.4.0 netmask 255.255.255.0 {
 " > /etc/dhcp/dhcpd.conf
 ```
 
+Selanjutnya, pada DNS Heiter juga ditambahkan konfigurasi seperti berikut:
+```sh
+echo '
+options {
+      directory "/var/cache/bind";
+
+      forwarders {
+              192.168.122.1;
+      };
+
+      // dnssec-validation auto;
+      allow-query{any;};
+      auth-nxdomain no;    # conform to RFC1035
+      listen-on-v6 { any; };
+};
+' >/etc/bind/named.conf.options
+
+service bind9 restart
+```
+
+Setelah itu, dilakukan testing di client dengan melakukan `ping google.com`. Berikut merupakan hasilnya:
+
+![soal 4](https://i.ibb.co/Z67V1qh/soal5.png)
+
+Dapat dilihat bahwa client telah berhasil terhubung ke internet melalui DNS Heiter dikarenakan saat menjalankan `cat /etc/resolv.conf`, tertera IP DNS Heiter dan berhasil melakukan ping terhadap Google.
+
 ## Soal 5
 Lama waktu DHCP server meminjamkan alamat IP kepada Client yang melalui Switch3 selama 3 menit sedangkan pada client yang melalui Switch4 selama 12 menit. Dengan waktu maksimal dialokasikan untuk peminjaman alamat IP selama 96 menit.
 
@@ -329,7 +360,17 @@ subnet 10.74.4.0 netmask 255.255.255.0 {
 }
 " > /etc/dhcp/dhcpd.conf
 ```
-Setelah itu, dilakukan testing pada client apakah sudah sesuai dengan ketentuan kelima soal tadi dengan melihat informasi lease time dan melakukanping kepada kedua domain. Berikut hasilnya:
+Setelah itu, dilakukan testing pada client apakah sudah sesuai dengan ketentuan kelima soal tadi dengan melihat informasi lease time dan melakukan ping kepada kedua domain. Sebelum melakukan testing, node client perlu dimatikan terlebih dahulu. Berikut hasilnya:
+
+**Revolte**
+
+![soal 5](https://i.ibb.co/3NSbntm/soal5-r.jpg)
+
+**Stark**
+
+![soal 5](https://i.ibb.co/fdjfrq4/soal5-s.jpg)
+
+Dapat dilihat bahwa konfigurasi DHCP telah berhasil. Hal ini dapat dilihat dari range IP dan lease time client Revolte dan Stark yang sudah sesuai dengan konfigurasi yang telah di-set.
 
 ## Soal 6
 ## Soal 7
@@ -381,6 +422,12 @@ mariadb --host=10.74.2.2 --port=3306 --user=kelompokIT21 --password
 
 SHOW DATABASES;
 ```
+
+Berikut merupakan hasilnya:
+
+![soal 13](https://i.ibb.co/2YsW8ww/soal13.jpg)
+
+Dapat dilihat bahwa Fern telah berhasil mengakses database sesuai dengan ketentuan soal.
 
 ## Soal 14
 Frieren, Flamme, dan Fern memiliki Riegel Channel sesuai dengan quest guide berikut. Jangan lupa melakukan instalasi PHP8.0 dan Composer.
@@ -532,7 +579,9 @@ Selanjutnya, dilakukan testing pada masing-masing worker dengan command berikut:
 ```sh
 lynx localhost:[port]
 ```
-Berikut hasilnya:
+Berikut hasilnya di salah satu worker Fern dengan port 8001:
+
+![soal 14](https://i.ibb.co/tQs49M4/soal14.jpg)
 
 ## Soal 15
 Riegel Channel memiliki beberapa endpoint yang harus ditesting sebanyak 100 request dengan 10 request/second. Lakukan testing pada endpoint POST /auth/register
@@ -560,6 +609,10 @@ ab -n 100 -c 10 -p register.json -T application/json http://10.74.4.6:8001/api/a
 ```
 Berikut merupakan hasilnya:
 
+![soal 15](https://i.ibb.co/VYCPqZL/soal15.png)
+
+Dapat dilihat bahwa dari 100 request yang dikirim, terdapat **1 request yang berhasil diproses** dan **99 request yang gagal diproses.** Hal ini wajar dikarenakan proses registrasi menggunakan akun yang sama hanya bisa dilakukan satu kali.
+
 ## Soal 16
 Lakukan testing pada endpoint POST /auth/register
 
@@ -579,6 +632,10 @@ ab -n 100 -c 10 -p login.json -T application/json http://10.74.4.6:8001/api/auth
 
 Berikut merupakan hasilnya:
 
+![soal 16](https://i.ibb.co/T1RNFPX/soal16.jpg)
+
+Dapat dilihat bahwa dari 100 request yang dikirim, terdapat **61 request yang berhasil diproses** dan **39 request yang gagal diproses.**
+
 ## Soal 17
 Lakukan testing pada endpoint GET /me
 
@@ -593,7 +650,9 @@ Untuk melihat token, jalankan command berikut
 ```sh
 cat login_output.txt
 ```
-Berikut isinya:
+Berikut adalah tokennya:
+
+![soal 17 token](https://i.ibb.co/wrPJgr2/soal17token.jpg)
 
 Selanjutnya, jalankan command berikut untuk melakukan testing di client:
 ```sh
@@ -601,6 +660,10 @@ ab -n 100 -c 10 -H "Authorization: Bearer $token" http://10.74.4.6:8001/api/me
 ```
 
 Berikut merupakan hasilnya:
+
+![soal 17](https://i.ibb.co/VLz6yV2/soal17.png)
+
+Dapat dilihat bahwa dari 100 request yang dikirim, terdapat **60 request yang berhasil diproses** dan **40 request yang gagal diproses.**
 
 ## Soal 18
 Untuk memastikan ketiganya bekerja sama secara adil untuk mengatur Riegel Channel maka implementasikan Proxy Bind pada Eisen untuk mengaitkan IP dari Frieren, Flamme, dan Fern.
@@ -646,13 +709,16 @@ www     IN      CNAME   riegel.canyon.it21.com.
 " > /etc/bind/jarkom/riegel.canyon.it21.com
 ```
 
-Selanjutnya, dilakukan testing pada salah satu client ke endpoint /auth/login dengan command berikut:
+Selanjutnya, dilakukan testing pada salah satu client ke endpoint `/auth/login` dengan command berikut:
 ```sh
 ab -n 100 -c 10 -p login.json -T application/json http://www.riegel.canyon.it21.com/api/auth/login
 ```
 
 Berikut merupakan hasilnya:
 
+![soal 18](https://i.ibb.co/d6NWzZm/soal182.png)
+
+![soal 18](https://i.ibb.co/tCLyHY3/soal18.jpg)
 
 ## Soal 19
 Untuk meningkatkan performa dari Worker, coba implementasikan PHP-FPM pada Frieren, Flamme, dan Fern. Untuk testing kinerja naikkan 
@@ -763,9 +829,21 @@ service php8.0-fpm restart
 
 ### Hasil Tiap Percobaan
 #### Hasil Script Awal
+
+![soal 19_awal](https://i.ibb.co/5MnDv22/soal19awal.jpg)
+
 #### Hasil Script 1
+
+![soal 19_1](https://i.ibb.co/5LjGT06/soal191.jpg)
+
 #### Hasil Script 2
+
+![soal 19_2](https://i.ibb.co/YDPFxf6/soal192.jpg)
+
 #### Hasil Script 3
+
+![soal 19_3](https://i.ibb.co/ZgSSJ3V/soal193.jpg)
+
 
 ## Soal 20
 Nampaknya hanya menggunakan PHP-FPM tidak cukup untuk meningkatkan performa dari worker maka implementasikan Least-Conn pada Eisen. Untuk testing kinerja dari worker tersebut dilakukan sebanyak 100 request dengan 10 request/second.
@@ -821,3 +899,7 @@ ab -n 100 -c 10 -p login.json -T application/json http://www.riegel.canyon.it21.
 ```
 
 Berikut merupakan hasilnya:
+
+![soal 20](https://i.ibb.co/mHhSzBT/soal20.jpg)
+
+Dari hasil tersebut, dapat dilihat bahwa penggunaan algoritma Load Balancing Least-Connection sangat berpengaruh. Hal ini terlihat dari **jumlah request yang berhasil diproses terdapat 96 request** dan yang gagal diproses hanya terdapat 4 request saja.
