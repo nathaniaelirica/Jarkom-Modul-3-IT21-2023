@@ -7,7 +7,7 @@
 ## Network Configuration
 Lakukan konfigurasi sesuai dengan peta yang sudah diberikan.
 
-![topologi](https://i.ibb.co/VgvWjFP/topologi.jpg)
+![topologi](https://i.ibb.co/Kq9KRJp/topologi.png)
 
 Berikut merupakan konfigurasi untuk tiap node:
 - Aura
