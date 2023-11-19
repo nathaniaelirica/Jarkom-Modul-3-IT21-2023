@@ -584,7 +584,7 @@ Berikut hasilnya di salah satu worker Fern dengan port 8001:
 ![soal 14](https://i.ibb.co/tQs49M4/soal14.jpg)
 
 ## Soal 15
-Riegel Channel memiliki beberapa endpoint yang harus ditesting sebanyak 100 request dengan 10 request/second. Lakukan testing pada endpoint POST /auth/register
+Riegel Channel memiliki beberapa endpoint yang harus ditesting sebanyak 100 request dengan 10 request/second. Lakukan testing pada endpoint POST /auth/register.
 
 Untuk menyelesaikan soal ini, dilakukan testing menggunakan Apache Benchmark terhadap salah satu worker dan dilakukan di salah satu client. Sebagai contoh, testing akan dilakukan terhadap worker Fern di client Revolte. 
 
