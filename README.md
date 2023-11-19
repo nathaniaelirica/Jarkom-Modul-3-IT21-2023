@@ -246,7 +246,7 @@ subnet 10.74.3.0 netmask 255.255.255.0 {
     range 10.74.3.16 10.74.3.32;
     range 10.74.3.64 10.74.3.80;
     option routers 10.74.3.1;
-}
+} 
 " > /etc/dhcp/dhcpd.conf
 ```
 
@@ -330,3 +330,494 @@ subnet 10.74.4.0 netmask 255.255.255.0 {
 " > /etc/dhcp/dhcpd.conf
 ```
 Setelah itu, dilakukan testing pada client apakah sudah sesuai dengan ketentuan kelima soal tadi dengan melihat informasi lease time dan melakukanping kepada kedua domain. Berikut hasilnya:
+
+## Soal 6
+## Soal 7
+## Soal 8
+## Soal 9
+## Soal 10
+## Soal 11
+## Soal 12
+
+## Soal 13
+Semua data yang diperlukan, diatur pada Denken dan harus dapat diakses oleh Frieren, Flamme, dan Fern.
+
+Untuk menyelesaikan soal ini, perlu dilakukan instalasi mysql dan konfigurasi di Database Server yaitu, Denken. Berikut langkah-langkahnya:
+```sh
+apt-get update
+apt-get install mariadb-server -y
+service mysql start
+
+echo "
+[mysqld]
+skip-networking=0
+skip-bind-address
+" > /etc/mysql/my.cnf
+
+service mysql restart
+```
+
+Selanjutnya, jalankan command-command berikut:
+```sh
+mysql -u root -p
+
+CREATE USER 'kelompokIT21'@'%' IDENTIFIED BY 'passwordIT21';
+CREATE USER 'kelompokIT21'@'localhost' IDENTIFIED BY 'passwordIT21';
+CREATE DATABASE dbkelompokIT21;
+GRANT ALL PRIVILEGES ON *.* TO 'kelompokIT21'@'%';
+GRANT ALL PRIVILEGES ON *.* TO 'kelompokIT21'@'localhost';
+FLUSH PRIVILEGES;
+```
+
+Setelah itu, lakukan testing pada salah satu Laravel Worker. Pada Laravel Worker perlu dilakukan instalasi terlebih dahulu sebagai berikut:
+```sh
+apt-get update
+apt-get install mariadb-client -y
+```
+
+Selanjutnya, untuk mengecek apakah database dapat diakses oleh seluruh worker dengan menjalankan command berikut di salah satu Laravel Worker:
+```sh
+mariadb --host=10.74.2.2 --port=3306 --user=kelompokIT21 --password
+
+SHOW DATABASES;
+```
+
+## Soal 14
+Frieren, Flamme, dan Fern memiliki Riegel Channel sesuai dengan quest guide berikut. Jangan lupa melakukan instalasi PHP8.0 dan Composer.
+
+Untuk menyelesaikan soal ini, perlu melakukan beberapa instalasi pada Laravel Worker. Berikut langkah instalasinya:
+```sh
+apt-get update
+
+apt-get install -y lsb-release ca-certificates apt-transport-https software-properties-common gnupg2
+curl -sSLo /usr/share/keyrings/deb.sury.org-php.gpg https://packages.sury.org/php/apt.gpg
+sh -c 'echo "deb [signed-by=/usr/share/keyrings/deb.sury.org-php.gpg] https://packages.sury.org/php/ $(lsb_release -sc) main" > /etc/apt/sources.list.d/php.list'
+
+apt-get install php8.0-mbstring php8.0-xml php8.0-cli php8.0-common php8.0-intl php8.0-opcache php8.0-readline php8.0-mysql php8.0-fpm php8.0-curl unzip wget -y
+
+apt-get install nginx -y
+apt-get install lynx -y
+apt-get install apache2-utils -y
+
+apt-get install wget -y
+wget https://getcomposer.org/download/2.0.13/composer.phar
+chmod +x composer.phar
+mv composer.phar /usr/bin/composer
+
+apt-get install git -y
+```
+
+Selanjutnya, perlu melakukan `git clone` resource yang telah diberikan
+```sh
+cd /var/www && git clone https://github.com/martuafernando/laravel-praktikum-jarkom.git
+cd /var/www/laravel-praktikum-jarkom && composer update
+```
+
+Selanjutnya, perlu melakukan beberapa konfigurasi pada tiap worker sebagai berikut:
+```sh
+cd /var/www/laravel-praktikum-jarkom && cp .env.example .env
+echo '
+APP_NAME=Laravel
+APP_ENV=local
+APP_KEY=base64:z70nhApUrqTL6RdG3HQku6UPwC/JtMOvBN3N0fOvVAc=
+APP_DEBUG=true
+APP_URL=http://localhost
+
+LOG_CHANNEL=stack
+LOG_DEPRECATIONS_CHANNEL=null
+LOG_LEVEL=debug
+
+DB_CONNECTION=mysql
+DB_HOST=10.74.2.2
+DB_PORT=3306
+DB_DATABASE=dbkelompokIT21
+DB_USERNAME=kelompokIT21
+DB_PASSWORD=passwordIT21
+
+BROADCAST_DRIVER=log
+CACHE_DRIVER=file
+FILESYSTEM_DISK=local
+QUEUE_CONNECTION=sync
+SESSION_DRIVER=file
+SESSION_LIFETIME=120
+
+MEMCACHED_HOST=127.0.0.1
+
+REDIS_HOST=127.0.0.1
+REDIS_PASSWORD=null
+REDIS_PORT=6379
+
+MAIL_MAILER=smtp
+MAIL_HOST=mailpit
+MAIL_PORT=1025
+MAIL_USERNAME=null
+MAIL_PASSWORD=null
+MAIL_ENCRYPTION=null
+MAIL_FROM_ADDRESS="hello@example.com"
+MAIL_FROM_NAME="${APP_NAME}"
+
+AWS_ACCESS_KEY_ID=
+AWS_SECRET_ACCESS_KEY=
+AWS_DEFAULT_REGION=us-east-1
+AWS_BUCKET=
+AWS_USE_PATH_STYLE_ENDPOINT=false
+
+PUSHER_APP_ID=
+PUSHER_APP_KEY=
+PUSHER_APP_SECRET=
+PUSHER_HOST=
+PUSHER_PORT=443
+PUSHER_SCHEME=https
+PUSHER_APP_CLUSTER=mt1
+
+VITE_PUSHER_APP_KEY="${PUSHER_APP_KEY}"
+VITE_PUSHER_HOST="${PUSHER_HOST}"
+VITE_PUSHER_PORT="${PUSHER_PORT}"
+VITE_PUSHER_SCHEME="${PUSHER_SCHEME}"
+VITE_PUSHER_APP_CLUSTER="${PUSHER_APP_CLUSTER}"
+' > /var/www/laravel-praktikum-jarkom/.env
+cd /var/www/laravel-praktikum-jarkom && php artisan migrate:fresh
+cd /var/www/laravel-praktikum-jarkom && php artisan db:seed --class=AiringsTableSeeder
+cd /var/www/laravel-praktikum-jarkom && php artisan key:generate
+cd /var/www/laravel-praktikum-jarkom && php artisan jwt:secret
+cd /var/www/laravel-praktikum-jarkom && php artisan storage:link
+chown -R www-data.www-data /var/www/laravel-praktikum-jarkom/storage
+```
+
+Selanjutnya, perlu melakukan konfigurasi nginx pada tiap worker. Berikut penetapan port untuk tiap worker:
+```sh
+# Fern
+10.74.4.6:8001
+# Flamme
+10.74.4.5:8002
+### Frieren
+10.74.4.4:8003
+```
+Berikut merupakan konfigurasi nginx pada salah satu worker yaitu, Fern:
+```sh
+echo '
+server {
+    listen 8001;
+
+    root /var/www/laravel-praktikum-jarkom/public;
+
+    index index.php index.html index.htm;
+    server_name _;
+
+    location / {
+            try_files $uri $uri/ /index.php?$query_string;
+    }
+
+    # pass PHP scripts to FastCGI server
+    location ~ \.php$ {
+      include snippets/fastcgi-php.conf;
+      fastcgi_pass unix:/var/run/php/php8.0-fpm.sock;
+    }
+
+    location ~ /\.ht {
+            deny all;
+    }
+
+    error_log /var/log/nginx/praktikum-jarkom_error.log;
+    access_log /var/log/nginx/praktikum-jarkom_access.log;
+}
+' > /etc/nginx/sites-available/praktikum-jarkom
+
+ln -s /etc/nginx/sites-available/praktikum-jarkom /etc/nginx/sites-enabled/laravel-worker
+
+service nginx restart
+```
+
+Selanjutnya, dilakukan testing pada masing-masing worker dengan command berikut:
+```sh
+lynx localhost:[port]
+```
+Berikut hasilnya:
+
+## Soal 15
+Riegel Channel memiliki beberapa endpoint yang harus ditesting sebanyak 100 request dengan 10 request/second. Lakukan testing pada endpoint POST /auth/register
+
+Untuk menyelesaikan soal ini, dilakukan testing menggunakan Apache Benchmark terhadap salah satu worker dan dilakukan di salah satu client. Sebagai contoh, testing akan dilakukan terhadap worker Fern di client Revolte. 
+
+Untuk melakukan testing, perlu melakukan instalasi dan membuat file body yang akan dikirimkan ke endpoint di client terlebih dahulu. Berikut tahapannya:
+```sh
+apt-get update
+apt-get install lynx -y
+apt-get install htop -y
+apt-get install apache2-utils -y
+apt-get install jq -y
+
+echo '
+{
+  "username": "kelompokIT21",
+  "password": "passwordIT21"
+}' > register.json
+```
+
+Selanjutnya, jalankan command berikut untuk melakukan testing di client:
+```sh
+ab -n 100 -c 10 -p register.json -T application/json http://10.74.4.6:8001/api/auth/register
+```
+Berikut merupakan hasilnya:
+
+## Soal 16
+Lakukan testing pada endpoint POST /auth/register
+
+Seperti soal sebelumnya, perlu membuat file body terlebih dahulu sebagai berikut:
+```sh
+echo '
+{
+  "username": "kelompokIT21",
+  "password": "passwordIT21"
+}' > login.json
+```
+
+Selanjutnya, jalankan command berikut untuk melakukan testing di client:
+```sh
+ab -n 100 -c 10 -p login.json -T application/json http://10.74.4.6:8001/api/auth/login
+```
+
+Berikut merupakan hasilnya:
+
+## Soal 17
+Lakukan testing pada endpoint GET /me
+
+Untuk menyelesaikan soal ini, perlu mendapatkan token dengan cara berikut:
+```sh
+curl -X POST -H "Content-Type: application/json" -d @login.json http://10.74.4.6:8001/api/auth/login > login_output.txt
+
+token=$(cat login_output.txt | jq -r '.token')
+```
+
+Untuk melihat token, jalankan command berikut
+```sh
+cat login_output.txt
+```
+Berikut isinya:
+
+Selanjutnya, jalankan command berikut untuk melakukan testing di client:
+```sh
+ab -n 100 -c 10 -H "Authorization: Bearer $token" http://10.74.4.6:8001/api/me
+```
+
+Berikut merupakan hasilnya:
+
+## Soal 18
+Untuk memastikan ketiganya bekerja sama secara adil untuk mengatur Riegel Channel maka implementasikan Proxy Bind pada Eisen untuk mengaitkan IP dari Frieren, Flamme, dan Fern.
+
+Untuk menyelesaikan soal ini, perlu dilakukan konfigurasi nginx pada Load Balancer yaitu Eisen. Berikut konfigurasinya:
+```sh
+echo '
+upstream worker {
+    server 10.74.4.6:8001;
+    server 10.74.4.5:8002;
+    server 10.74.4.4:8003;
+}
+
+server {
+    listen 80;
+    server_name riegel.canyon.it21.com www.riegel.canyon.it21.com;
+
+    location / {
+        proxy_pass http://worker;
+    }
+}
+' > /etc/nginx/sites-available/laravel-worker
+
+ln -s /etc/nginx/sites-available/laravel-worker /etc/nginx/sites-enabled/laravel-worker
+
+service nginx restart
+```
+
+Selanjutnya pada DNS Server atau Heiter, perlu dilakukan perubahan sedikit yaitu mengganti IP pada domain server riegel.canyon.it21.com menjadi IP Eisen. Berikut konfigurasinya:
+```sh
+echo "
+\$TTL    604800
+@       IN      SOA     riegel.canyon.it21.com. root.canyon.it21.com. (
+                              2         ; Serial
+                         604800         ; Refresh
+                          86400         ; Retry
+                        2419200         ; Expire
+                         604800 )       ; Negative Cache TTL
+;
+@       IN      NS      riegel.canyon.it21.com.
+@       IN      A       10.74.2.3
+www     IN      CNAME   riegel.canyon.it21.com.
+" > /etc/bind/jarkom/riegel.canyon.it21.com
+```
+
+Selanjutnya, dilakukan testing pada salah satu client ke endpoint /auth/login dengan command berikut:
+```sh
+ab -n 100 -c 10 -p login.json -T application/json http://www.riegel.canyon.it21.com/api/auth/login
+```
+
+Berikut merupakan hasilnya:
+
+
+## Soal 19
+Untuk meningkatkan performa dari Worker, coba implementasikan PHP-FPM pada Frieren, Flamme, dan Fern. Untuk testing kinerja naikkan 
+- pm.max_children
+- pm.start_servers
+- pm.min_spare_servers
+- pm.max_spare_servers
+sebanyak tiga percobaan dan lakukan testing sebanyak 100 request dengan 10 request/second.
+
+Untuk menyelesaikan soal ini, dilakukan empat percobaan konfigurasi PHP-FPM yaitu, percobaan awal sesuai dengan setup awal, dan tiga percobaan lainnya. Berikut merupakaan keempat konfigurasi yang kami coba di worker:
+
+### Script Percobaan 
+#### Script Awal
+```sh
+echo '
+[www]
+user = www-data
+group = www-data
+listen = /run/php/php8.0-fpm.sock
+listen.owner = www-data
+listen.group = www-data
+php_admin_value[disable_functions] = exec,passthru,shell_exec,system
+php_admin_flag[allow_url_fopen] = off
+
+; Choose how the process manager will control the number of child processes.
+
+pm = dynamic
+pm.max_children = 5
+pm.start_servers = 2
+pm.min_spare_servers = 1
+pm.max_spare_servers = 3
+' > /etc/php/8.0/fpm/pool.d/www.conf
+
+service php8.0-fpm restart
+```
+
+#### Script 1
+```sh
+echo '
+[www]
+user = www-data
+group = www-data
+listen = /run/php/php8.0-fpm.sock
+listen.owner = www-data
+listen.group = www-data
+php_admin_value[disable_functions] = exec,passthru,shell_exec,system
+php_admin_flag[allow_url_fopen] = off
+
+; Choose how the process manager will control the number of child processes.
+
+pm = dynamic
+pm.max_children = 30
+pm.start_servers = 6
+pm.min_spare_servers = 4
+pm.max_spare_servers = 10
+' > /etc/php/8.0/fpm/pool.d/www.conf
+
+service php8.0-fpm restart
+```
+
+#### Script 2
+```sh
+echo '
+[www]
+user = www-data
+group = www-data
+listen = /run/php/php8.0-fpm.sock
+listen.owner = www-data
+listen.group = www-data
+php_admin_value[disable_functions] = exec,passthru,shell_exec,system
+php_admin_flag[allow_url_fopen] = off
+
+; Choose how the process manager will control the number of child processes.
+
+pm = dynamic
+pm.max_children = 40
+pm.start_servers = 8
+pm.min_spare_servers = 4
+pm.max_spare_servers = 15
+' > /etc/php/8.0/fpm/pool.d/www.conf
+
+service php8.0-fpm restart
+```
+
+#### Script 3
+```sh
+echo '
+[www]
+user = www-data
+group = www-data
+listen = /run/php/php8.0-fpm.sock
+listen.owner = www-data
+listen.group = www-data
+php_admin_value[disable_functions] = exec,passthru,shell_exec,system
+php_admin_flag[allow_url_fopen] = off
+
+; Choose how the process manager will control the number of child processes.
+
+pm = dynamic
+pm.max_children = 50
+pm.start_servers = 10
+pm.min_spare_servers = 5
+pm.max_spare_servers = 20
+' > /etc/php/8.0/fpm/pool.d/www.conf
+
+service php8.0-fpm restart
+```
+
+### Hasil Tiap Percobaan
+#### Hasil Script Awal
+#### Hasil Script 1
+#### Hasil Script 2
+#### Hasil Script 3
+
+## Soal 20
+Nampaknya hanya menggunakan PHP-FPM tidak cukup untuk meningkatkan performa dari worker maka implementasikan Least-Conn pada Eisen. Untuk testing kinerja dari worker tersebut dilakukan sebanyak 100 request dengan 10 request/second.
+
+Untuk menyelesaikan soal ini, dilakukan penambahan konfigurasi `least_conn` di Eisen. Berikut konfigurasinya:
+```sh
+echo '
+upstream worker {
+    least_conn;
+    server 10.74.4.6:8001;
+    server 10.74.4.5:8002;
+    server 10.74.4.4:8003;
+}
+
+server {
+    listen 80;
+    server_name riegel.canyon.it21.com www.riegel.canyon.it21.com;
+
+    location / {
+        proxy_pass http://worker;
+    }
+}
+' > /etc/nginx/sites-available/laravel-worker
+
+service nginx restart
+```
+
+Konfigurasi PHP-FM yang digunakan adalah konfigurasi percobaan ketiga
+```sh
+echo '
+[www]
+user = www-data
+group = www-data
+listen = /run/php/php8.0-fpm.sock
+listen.owner = www-data
+listen.group = www-data
+php_admin_value[disable_functions] = exec,passthru,shell_exec,system
+php_admin_flag[allow_url_fopen] = off
+
+; Choose how the process manager will control the number of child processes.
+
+pm = dynamic
+pm.max_children = 50
+pm.start_servers = 10
+pm.min_spare_servers = 5
+pm.max_spare_servers = 20
+' > /etc/php/8.0/fpm/pool.d/www.conf
+```
+
+Selanjutnya, dilakukan testing di client menggunakan command berikut:
+```sh
+ab -n 100 -c 10 -p login.json -T application/json http://www.riegel.canyon.it21.com/api/auth/login
+```
+
+Berikut merupakan hasilnya:
