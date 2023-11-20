@@ -579,13 +579,21 @@ echo ' upstream worker {
 Berikut Hasilnya :
 
 **Round Robin**
+
 ![soal 10](https://i.ibb.co/7G62w6Z/image.png)
+
 **IP Hash**
+
 ![soal 10](https://i.ibb.co/5sMnCr6/image.png)
+
 **Least Connection**
+
 ![soal 10](https://i.ibb.co/85N8P09/image.png)
+
 **Generic Hash**
+
 ![soal 10](https://i.ibb.co/swNrjcz/image.png)
+
 
 ![soal 10](https://i.ibb.co/M25M5dd/image.png)
 
@@ -598,11 +606,17 @@ Pada file /etc/nginx/sites-available/lb_php di eisen mencoba menggunakan ```1 wo
 
 Berikut hasilnya : 
 
+
 **1 worker**
+
 ![soal 10](https://i.ibb.co/nc53pwM/image.png)
+
 **2 worker**
+
 ![soal 10](https://i.ibb.co/hRvB8s3/image.png)
+
 **3 worker**
+
 ![soal 10](https://i.ibb.co/fvTkK0d/image.png)
 
 ## Soal 10
