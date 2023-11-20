@@ -955,7 +955,19 @@ Berikut merupakan hasilnya:
 
 ![soal 18](https://i.ibb.co/d6NWzZm/soal182.png)
 
-![soal 18](https://i.ibb.co/tCLyHY3/soal18.jpg)
+**Fern**
+
+![soal 18](https://i.ibb.co/dgB5ngp/soal18fern.png)
+
+**Flamme**
+
+![soal 18](https://i.ibb.co/VtPR2vV/soal18flamme.png)
+
+**Frieren**
+
+![soal 18](https://i.ibb.co/sJTRznk/soal18frieren.png)
+
+Dari ketiga hasil di atas, dapat dilihat bahwa handling request dari client sudah terbagi kepada tiga worker sehingga konfigurasinya sudah berhasil.
 
 ## Soal 19
 Untuk meningkatkan performa dari Worker, coba implementasikan PHP-FPM pada Frieren, Flamme, dan Fern. Untuk testing kinerja naikkan 
