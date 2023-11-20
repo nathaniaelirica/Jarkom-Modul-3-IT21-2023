@@ -47,7 +47,7 @@ echo "
                          604800 )       ; Negative Cache TTL
 ;
 @       IN      NS      granz.channel.it21.com.
-@       IN      A       10.74.3.2
+@       IN      A       10.74.2.3
 www     IN      CNAME   granz.channel.it21.com.
 " > /etc/bind/jarkom/granz.channel.it21.com
 
