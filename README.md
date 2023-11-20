@@ -373,7 +373,163 @@ Setelah itu, dilakukan testing pada client apakah sudah sesuai dengan ketentuan 
 Dapat dilihat bahwa konfigurasi DHCP telah berhasil. Hal ini dapat dilihat dari range IP dan lease time client Revolte dan Stark yang sudah sesuai dengan konfigurasi yang telah di-set.
 
 ## Soal 6
+Pada masing-masing worker PHP, lakukan konfigurasi virtual host untuk website berikut dengan menggunakan php 7.3.
+
+Untuk menyelesaikan soal ini, perlu melakukukan download dan unzip lalu mengkofigurasikannya di tiap *php worker* Berikut merupakan konfigurasinya:
+
+
+**Bashrc**
+```
+echo nameserver 192.168.122.1 > /etc/resolv.conf
+
+apt-get update
+apt-get install nginx -y
+apt-get install lynx -y
+apt-get install php php-fpm -y
+apt-get install wget -y
+apt install htop -y
+apt install apache2-utils -y
+apt-get install jq -y
+apt-get install unzip -y
+service nginx start
+service php7.3-fpm start
+
+wget -O '/var/www/granz.channel.it21.com' 'https://drive.google.com/u/0/uc?id=1ViSkRq7SmwZgdK64eRbr5Fm1EGCTPrU1&export=down$unzip -o /var/www/granz.channel.it21.com -d /var/www/
+rm /var/www/granz.channel.it21.com
+mv /var/www/modul-3 /var/www/granz.channel.it21.com
+```
+**Script.sh**
+```
+cp /etc/nginx/sites-available/default /etc/nginx/sites-available/granz.channel.it21.com
+ln -s /etc/nginx/sites-available/granz.channel.it21.com /etc/nginx/sites-enabled/
+rm /etc/nginx/sites-enabled/default
+
+echo 'server {
+    listen 80;
+    server_name _;
+
+    root /var/www/granz.channel.it21.com;
+    index index.php index.html index.htm;
+
+    location / {
+        try_files $uri $uri/ /index.php?$query_string;
+    }
+
+    location ~ \.php$ {
+        include snippets/fastcgi-php.conf;
+        fastcgi_pass unix:/run/php/php7.3-fpm.sock;
+        fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+        include fastcgi_params;
+    }
+}' > /etc/nginx/sites-available/granz.channel.it21.com
+
+service nginx restart
+```
+Berikut hasilnya:
+
+```lynx localhost```
+
+![soal 6](https://i.ibb.co/7Y8W116/image.png)
+
+Dapat dilihat bahwa  konfigurasi virtual host untuk website telah berhasil. Hal ini dapat dilihat dari ouput saat website diakses yang sudah sesuai dengan konfigurasi yang telah di-set.
+
 ## Soal 7
+Kepala suku dari Bredt Region memberikan resource server sebagai berikut:
+
+Lawine, 4GB, 2vCPU, dan 80 GB SSD.
+
+Linie, 2GB, 2vCPU, dan 50 GB SSD.
+
+Lugner 1GB, 1vCPU, dan 25 GB SSD.
+
+aturlah agar Eisen dapat bekerja dengan maksimal, lalu lakukan testing dengan 1000 request dan 100 request/second.
+
+Untuk menyelesaikan soal ini, arahkan ip domain terlebih dahulu. Berikut merupakan konfigurasinya:
+
+
+**Heiter**
+```
+\$TTL    604800
+@       IN      SOA     reigel.canyon.it21.com. root.riegel.canyon.it21.com. (
+                              2         ; Serial
+                         604800         ; Refresh
+                          86400         ; Retry
+                        2419200         ; Expire
+                         604800 )       ; Negative Cache TTL
+;
+@       IN      NS      reigel.canyon.it21.com.
+@       IN      A       10.74.2.3
+" > /etc/bind/jarkom/riegel.canyon.it21.com
+
+
+cp /etc/bind/db.local /etc/bind/jarkom/granz.channel.it21.com.
+
+echo "
+\$TTL    604800
+@       IN      SOA     granz.channel.it21.com. root.granz.channel.it21.com. (
+                              2         ; Serial
+                         604800         ; Refresh
+                          86400         ; Retry
+                        2419200         ; Expire
+                         604800 )       ; Negative Cache TTL
+;
+@       IN      NS      granz.channel.it21.com.
+@       IN      A       10.74.2.3
+" > /etc/bind/jarkom/granz.channel.it21.com
+```
+**Eisen**
+```
+apt-get update
+apt-get install nginx -y
+apt-get install lynx -y
+apt-get install htop -y
+
+apt-get install apache2-utils -y
+
+service nginx start
+cp /etc/nginx/sites-available/default /etc/nginx/sites-available/lb_php
+
+mkdir /etc/nginx/rahasisakita
+
+echo ' upstream worker {
+    server 10.74.3.4;
+    server 10.74.3.5;
+    server 10.74.3.6;
+}
+
+server {
+    listen 80;
+    server_name granz.channel.it21.com www.granz.channel.it21.com;
+
+    root /var/www/html;
+
+    index index.html index.htm index.nginx-debian.html;
+
+    server_name _;
+
+    location / {
+   
+       proxy_pass http://worker;
+
+    }
+
+} ' > /etc/nginx/sites-available/lb_php
+
+ln -s /etc/nginx/sites-available/lb_php /etc/nginx/sites-enabled/
+rm /etc/nginx/sites-enabled/default
+
+service nginx restart
+```
+Berikut hasilnya:
+
+```ab -n 1000 -c 100 http://granz.channel.it21.com/ ```
+
+![soal 7](https://i.ibb.co/F7T4L0C/image.png)
+
+![soal 7](https://i.ibb.co/ygJwSSK/image.png)
+
+Dapat dilihat bahwa  testing dengan 1000 request dan 100 request/second telah berhasil. 
+
 ## Soal 8
 ## Soal 9
 ## Soal 10
