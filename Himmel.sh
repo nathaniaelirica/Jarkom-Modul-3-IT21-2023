@@ -46,6 +46,12 @@ subnet 10.74.4.0 netmask 255.255.255.0 {
     default-lease-time 720;
     max-lease-time 5760;
 }
+
+host Revolte {
+hardware ethernet 82:b0:a9:88:c9:82;
+fixed-address 10.74.3.69;
+}
+
 " > /etc/dhcp/dhcpd.conf
 
 service isc-dhcp-server restart
