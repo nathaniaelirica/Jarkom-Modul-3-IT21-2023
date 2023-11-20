@@ -571,6 +571,32 @@ Berikut hasilnya:
 
 ![soal 10](https://i.ibb.co/6yLFcDk/image.png)
 
+## Soal 11
+Lalu buat untuk setiap request yang mengandung /its akan di proxy passing menuju halaman https://www.its.ac.id. (11) hint: (proxy_pass)
+
+**Analisis**
+
+Untuk menyelesaikan soal ini, tambahkan konfigurasi password dan buat folder, berikut merupakan konfigurasi tambahannya :
+
+**Eisen**
+
+/etc/nginx/sites-available/lb_php
+```
+location ~ /its {
+    proxy_pass https://www.its.ac.id;
+    proxy_set_header Host www.its.ac.id;
+    proxy_set_header X-Real-IP $remote_addr;
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    proxy_set_header X-Forwarded-Proto $scheme;
+}
+```
+Berikut hasilnya :
+
+```lynx http://granz.channel.it21.com/its ```
+
+![soal 12](https://i.ibb.co/9GPSQmD/image.png)
+
+
 ## Soal 12
 Selanjutnya LB ini hanya boleh diakses oleh client dengan IP [Prefix IP].3.69, [Prefix IP].3.70, [Prefix IP].4.167, dan [Prefix IP].4.168.
 
