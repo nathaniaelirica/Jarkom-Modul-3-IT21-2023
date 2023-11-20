@@ -375,6 +375,8 @@ Dapat dilihat bahwa konfigurasi DHCP telah berhasil. Hal ini dapat dilihat dari 
 ## Soal 6
 Pada masing-masing worker PHP, lakukan konfigurasi virtual host untuk website berikut dengan menggunakan php 7.3.
 
+**Analisis**
+
 Untuk menyelesaikan soal ini, perlu melakukukan download dan unzip lalu mengkofigurasikannya di tiap *php worker* Berikut merupakan konfigurasinya:
 
 
@@ -444,22 +446,23 @@ Lugner 1GB, 1vCPU, dan 25 GB SSD.
 
 aturlah agar Eisen dapat bekerja dengan maksimal, lalu lakukan testing dengan 1000 request dan 100 request/second.
 
+**Analisis**
+
 Untuk menyelesaikan soal ini, arahkan ip domain terlebih dahulu. Berikut merupakan konfigurasinya:
 
 
 **Heiter**
 ```
 \$TTL    604800
-@       IN      SOA     riegel.canyon.it21.com. root.riegel.canyon.it21.com. (
+@       IN      SOA     reigel.canyon.it21.com. root.riegel.canyon.it21.com. (
                               2         ; Serial
                          604800         ; Refresh
                           86400         ; Retry
                         2419200         ; Expire
                          604800 )       ; Negative Cache TTL
 ;
-@       IN      NS      riegel.canyon.it21.com.
+@       IN      NS      reigel.canyon.it21.com.
 @       IN      A       10.74.2.3
-www     IN      CNAME   riegel.canyon.it21.com.
 " > /etc/bind/jarkom/riegel.canyon.it21.com
 
 
@@ -476,7 +479,6 @@ echo "
 ;
 @       IN      NS      granz.channel.it21.com.
 @       IN      A       10.74.2.3
-www     IN      CNAME   granz.channel.it21.com.
 " > /etc/bind/jarkom/granz.channel.it21.com
 ```
 **Eisen**
@@ -532,11 +534,88 @@ Berikut hasilnya:
 
 Dapat dilihat bahwa  testing dengan 1000 request dan 100 request/second telah berhasil. 
 
+
 ## Soal 8
+
 ## Soal 9
+
 ## Soal 10
-## Soal 11
+Selanjutnya coba tambahkan konfigurasi autentikasi di LB dengan dengan kombinasi username: “netics” dan password: “ajkyyy”, dengan yyy merupakan kode kelompok. Terakhir simpan file “htpasswd” nya di /etc/nginx/rahasisakita/
+
+**Analisis**
+
+Untuk menyelesaikan soal ini, buatlah folder dan set up password.Berikut merupakan konfigurasinya:
+
+
+**Eisen**
+```
+mkdir /etc/nginx/rahasisakita
+htpasswd -c /etc/nginx/rahasisakita/htpasswd netics
+```
+Tambahkan code ini pada location di file /etc/nginx/sites-available/lb_php
+```
+auth_basic "Restricted Content";
+auth_basic_user_file /etc/nginx/rahasisakita/htpasswd;
+```
+Lalu run dan masukkan password ```ajkit21```
+
+Berikut hasilnya:
+
+```lynx http://granz.channel.it21.com/ ```
+
+![soal 10](https://i.ibb.co/hR5hsp3/image.png)
+
+![soal 10](https://i.ibb.co/y55BpsP/image.png)
+
+![soal 10](https://i.ibb.co/pbVVz1n/image.png)
+
+![soal 10](https://i.ibb.co/6yLFcDk/image.png)
+
 ## Soal 12
+Selanjutnya LB ini hanya boleh diakses oleh client dengan IP [Prefix IP].3.69, [Prefix IP].3.70, [Prefix IP].4.167, dan [Prefix IP].4.168.
+
+**Analisis**
+
+Untuk menyelesaikan soal ini, tambahkan konfigurasi ip  .Berikut merupakan konfigurasi tambahannya:
+
+
+**Eisen**
+
+Tambahkan di location pada file /etc/nginx/sites-available/lb_php
+```
+    allow 10.74.3.69;
+    allow 10.74.3.70;
+    allow 10.74.4.167;
+    allow 10.74.4.168;
+```
+**Himmel**
+
+Tambahkan konfigurasi pada file /etc/dhcp/dhcpd.conf
+
+```
+host Revolte {
+ hardware ethernet 82:b0:a9:88:c9:82;
+ fixed-address 10.74.3.69;
+}
+```
+**Client**
+
+Tambahkan konfigurasi pada /etc/network/interfaces
+```
+hwaddress ether 10.74.3.69
+```
+
+Berikut hasilnya:
+
+**deny**
+
+![soal 12](https://i.ibb.co/SxQyQqd/image.png)
+
+**allow**
+
+![soal 12](https://i.ibb.co/6yLFcDk/image.png)
+
+![soal 12](https://i.ibb.co/xFxqJLQ/image.png)
 
 ## Soal 13
 Semua data yang diperlukan, diatur pada Denken dan harus dapat diakses oleh Frieren, Flamme, dan Fern.
