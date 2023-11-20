@@ -450,15 +450,16 @@ Untuk menyelesaikan soal ini, arahkan ip domain terlebih dahulu. Berikut merupak
 **Heiter**
 ```
 \$TTL    604800
-@       IN      SOA     reigel.canyon.it21.com. root.riegel.canyon.it21.com. (
+@       IN      SOA     riegel.canyon.it21.com. root.riegel.canyon.it21.com. (
                               2         ; Serial
                          604800         ; Refresh
                           86400         ; Retry
                         2419200         ; Expire
                          604800 )       ; Negative Cache TTL
 ;
-@       IN      NS      reigel.canyon.it21.com.
+@       IN      NS      riegel.canyon.it21.com.
 @       IN      A       10.74.2.3
+www     IN      CNAME   riegel.canyon.it21.com.
 " > /etc/bind/jarkom/riegel.canyon.it21.com
 
 
@@ -475,6 +476,7 @@ echo "
 ;
 @       IN      NS      granz.channel.it21.com.
 @       IN      A       10.74.2.3
+www     IN      CNAME   granz.channel.it21.com.
 " > /etc/bind/jarkom/granz.channel.it21.com
 ```
 **Eisen**
