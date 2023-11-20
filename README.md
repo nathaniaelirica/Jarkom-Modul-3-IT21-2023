@@ -179,7 +179,7 @@ service bind9 restart
 ```
 Selanjutnya, dilakukan testing dengan melakukan ping terhadap kedua domain di client. Sebagai contoh, testing dilakukan di Revolte.
 
-![soal 0](https://i.ibb.co/RBFRTVZ/soal0.jpg)
+![soal 0](https://i.ibb.co/DkKVJ6j/image.png)
 
 ## Soal 2
 Client yang melalui Switch3 mendapatkan range IP dari [prefix IP].3.16 - [prefix IP].3.32 dan [prefix IP].3.64 - [prefix IP].3.80
@@ -534,10 +534,76 @@ Berikut hasilnya:
 
 Dapat dilihat bahwa  testing dengan 1000 request dan 100 request/second telah berhasil. 
 
-
 ## Soal 8
+Karena diminta untuk menuliskan grimoire, buatlah analisis hasil testing dengan 200 request dan 10 request/second masing-masing algoritma Load Balancer 
+
+**Analisis**
+
+Untuk menyelesaikan soal ini, tambahkan pada pada file /etc/nginx/sites-available/lb_php pada eisen sesuai dengan algoritma yang ditentukan yaitu
+
+**Round Robin**
+```
+echo ' upstream worker {
+    server 10.74.3.4;
+    server 10.74.3.5;
+    server 10.74.3.6;
+}
+```
+**IP Hash**
+```
+echo ' upstream worker {
+    ip_hash;
+    server 10.74.3.4;
+    server 10.74.3.5;
+    server 10.74.3.6;
+}
+```
+**Least Connection**
+```
+echo ' upstream worker {
+    least_conn;
+    server 10.74.3.4;
+    server 10.74.3.5;
+    server 10.74.3.6;
+}
+```
+**Generic Hash**
+```
+echo ' upstream worker {
+    hash $request_uri consistent;
+    server 10.74.3.4;
+    server 10.74.3.5;
+    server 10.74.3.6;
+}
+```
+Berikut Hasilnya :
+
+**Round Robin**
+![soal 10](https://i.ibb.co/7G62w6Z/image.png)
+**IP Hash**
+![soal 10](https://i.ibb.co/5sMnCr6/image.png)
+**Least Connection**
+![soal 10](https://i.ibb.co/85N8P09/image.png)
+**Generic Hash**
+![soal 10](https://i.ibb.co/swNrjcz/image.png)
+
+![soal 10](https://i.ibb.co/M25M5dd/image.png)
 
 ## Soal 9
+Dengan menggunakan algoritma Round Robin, lakukan testing dengan menggunakan 3 worker, 2 worker, dan 1 worker sebanyak 100 request dengan 10 request/second, kemudian tambahkan grafiknya pada grimoire.
+
+**Analisis**
+
+Pada file /etc/nginx/sites-available/lb_php di eisen mencoba menggunakan ```1 worker```, ```2 worker```, dan ```3 worker```
+
+Berikut hasilnya : 
+
+**1 worker**
+![soal 10](https://i.ibb.co/nc53pwM/image.png)
+**2 worker**
+![soal 10](https://i.ibb.co/hRvB8s3/image.png)
+**3 worker**
+![soal 10](https://i.ibb.co/fvTkK0d/image.png)
 
 ## Soal 10
 Selanjutnya coba tambahkan konfigurasi autentikasi di LB dengan dengan kombinasi username: “netics” dan password: “ajkyyy”, dengan yyy merupakan kode kelompok. Terakhir simpan file “htpasswd” nya di /etc/nginx/rahasisakita/
