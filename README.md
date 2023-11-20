@@ -179,7 +179,7 @@ service bind9 restart
 ```
 Selanjutnya, dilakukan testing dengan melakukan ping terhadap kedua domain di client. Sebagai contoh, testing dilakukan di Revolte.
 
-![soal 0](https://i.ibb.co/DkKVJ6j/image.png)
+![soal 5](https://i.ibb.co/DkKVJ6j/image.png)
 
 ## Soal 2
 Client yang melalui Switch3 mendapatkan range IP dari [prefix IP].3.16 - [prefix IP].3.32 dan [prefix IP].3.64 - [prefix IP].3.80
@@ -618,6 +618,9 @@ Berikut hasilnya :
 **3 worker**
 
 ![soal 10](https://i.ibb.co/fvTkK0d/image.png)
+
+![soal 10](https://i.ibb.co/sCc9Bgw/image.png)
+
 
 ## Soal 10
 Selanjutnya coba tambahkan konfigurasi autentikasi di LB dengan dengan kombinasi username: “netics” dan password: “ajkyyy”, dengan yyy merupakan kode kelompok. Terakhir simpan file “htpasswd” nya di /etc/nginx/rahasisakita/
